@@ -7,6 +7,7 @@ import traceback
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from typing import Callable, Dict, Optional
+from pytz import timezone
 
 from binance.client import Client
 from binance.exceptions import BinanceAPIException
@@ -162,7 +163,7 @@ class BinanceAPIManager:
         return manager
 
     def now(self):
-        return datetime.now(tz=timezone.utc)
+        return datetime.now(timezone('Asia/Seoul'))
 
     def setup_websockets(self):
         self.stream_manager = BinanceStreamManager(

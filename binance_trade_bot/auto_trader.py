@@ -2,6 +2,7 @@ from binance_trade_bot.models import current_coin
 from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Dict, List
+from pytz import timezone
 
 from sqlalchemy.orm import Session
 
@@ -284,7 +285,7 @@ class AutoTrader:
         """
         Log current value state of all altcoin balances against BTC and USDT in DB.
         """
-        now = datetime.now()
+        now = datetime.now(timezone('Asia/Seoul'))
 
         coins = self.db.get_coins(True)
         cv_batch = []
