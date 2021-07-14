@@ -219,13 +219,16 @@ class AutoTrader:
             # Obtain (current coin)/(optional coin)
             coin_opt_coin_ratio = coin_price / optional_coin_price
 
+            # Grab the cumulative fee for coin -> bridge -> coin
             transaction_fee = self.manager.get_fee(pair.from_coin, self.config.BRIDGE, True) + self.manager.get_fee(
+                pair.to_coin, self.config.BRIDGE, False
+            ) - self.manager.get_fee(pair.from_coin, self.config.BRIDGE, True) * self.manager.get_fee(
                 pair.to_coin, self.config.BRIDGE, False
             )
 
-            ratio_dict[pair] = (
-                coin_opt_coin_ratio - transaction_fee * self.config.SCOUT_MULTIPLIER * coin_opt_coin_ratio
-            ) - pair.ratio
+            # Detect if trade will profit a particular %, defined by scout_multiplier. (To be renamed to scout_margin)
+            ratio_dict[pair] = (1 - transaction_fee) * coin_opt_coin_ratio / pair.ratio - self.config.SCOUT_MULTIPLIER / 100 - 1
+
         self.db.batch_log_scout(scout_logs)
         return (ratio_dict, prices)
 
